@@ -1,0 +1,106 @@
+Project EDH-2   -   AI github
+
+EDH-2 SPECS.txt Update 20260415		I made changes in the design. 
+
+Project: Make a milling, electronic dividing Head/Table actuator.
+
+Parts : 
+LED&KEY (TM1638) 8 Numbers, 8 LED, 8 Buttons
+Arduino Nano Every 
+ES-D508 Drive with KL23-2N-1000 Motor, > Timing Pulley 10XL035 
+Power Supply S-35-36 
+Power Supply 5 VDC 300mA 
+Dividing Head/Table - 10 inch, 90:1, > Timing Pulley 40XL, Final Output = 360:1 
+
+TM1638 <> Arduino (Connections) 
+VCC 		+5V 
+GND 		GND 
+STB 		D7 
+CLK 		D4 
+DIO 		D8 
+SW1 		D2 	Jog/Start/Next Sequence   (External Button) 
+
+Arduino <> ES-D508 > KL-23-2N-1000 (Connections) 
+GND 		FAULT- 
+D13 		FAULT+ 	<<<<<<<<<<<<<<<<<<<
+D10 		ENA- 
++5V 		ENA+ 
+D11 		DIR- 
++5V 		DIR+ 
+D12 		PUL- 
++5V 		PUL+ 
+
+User Interface - TM1638 LED&KEY 
+LED Functions : 
+LED1 = 		Control & Motor ENABLED 
+LED2 = 		Division Mode 
+LED3 = 		Angle Mode 
+LED4 = 		Rotation Mode, Flashing (0.5 Sec) 
+LED5 = 		ON = CCW 
+LED6 = 		ON = Divisions (S6) 
+LED7 = 		ON = Position achieved 
+LED8 = 		ON = Motor Locked 
+
+
+Buttons Functions : 
+S1 		TOGGLE OFF/ON	//Hold for 2 sec 
+OFF = Disables Motor	(OR System Failure)
+All LEDs OFF, Maintain Display indicating command # requested 
+ON = Enable Motor, LED1 back on, Other LEDs Resume previous State, 
+Status digits back to normal operation. 
+
+S2 		SETUP (Default) =Division Mode (LED 2 = ON)
+TOGGLE =Angle Mode (LED 3 = ON) //Hold for 3 sec
+TOGGLE =Rotation Mode(LED 4 = ON) //Hold for 3 sec
+TOGGLE =Back to Division Mode (LED 2 = ON) //Hold for 3 sec
+S3 		TOGGLE = Motor OFF, TOGGLE = RESET Digits to “0”, Motor ON //Hold for 3 sec
+
+S4 		MEMORIZE RPM  //Hold for 1 sec
+
+S5 		TOGGLE CW/CCW //Hold for 3 sec
+
+S6 		TOGGLE for WHOLE or DIVISIONS //Hold for 1 sec
+
+S7 		Raise Command Numbers (Hold 1 sec for 5 increments/sec) 
+					(Hold 6 sec more for 20 increments/sec)
+
+S8 		Lower Command Numbers (Hold 1 sec for 5 increments/sec)
+					(Hold 6 sec more for 20 increments/sec)
+
+SW1 (External) 	In Divisions Mode = START/NEXT //Hold for 3 sec
+In Angles Mode = START/NEXT //Hold for 3 sec
+In Rotation Mode = JOG 	//Hold for 1 sec,
+   Start	//Hold 10 Sec,
+   Stop	//Hold 200Ms	 
+
+3 Modes: Divisions, Angles, Rotation. 
+
+Divisions MODE: 0/400 1 by 1 (3 Digits) (LED2 =ON)
+Digit 2, 3, 4. (Select S7+, S8-) 
+
+Angle Mode: 360 Deg. (6 Digits) (LED3 =On) 
+Precision: 1.000 (+- 0.001)
+Digit 2, 3, 4. 5, 6, 7 (Select S7+, S8-) 
+TOGGLE S6 = Whole # <Digit 2, 3, 4 
+TOGGLE S6 = Divisions # >Digit 5, 6, 7 (LED6=ON)
+
+Rotation Mode: 360 Deg. 1 by 1 (6 Digits) (LED4=ON, Flashing Cont. 0.5 Sec) 
+Digit 2, 3, 4. = Angle from "0" 
+Digit 5, 6, 7. = Motor Output RPM (Speed Ajust (Select S7+ S8-)(Hold for FAST INCREMENT)) 
+
+Max Speed determined in C++ code, 1 to 500 RPM max (motiom.cpp) 
+
+Soft accelaration/decelaration on all functions 
+
+Lock Motor on STOP 
+
+Anti bounce (200 min) on all buttons S1>S8, including SW1 (External) (C++ Programming)
+
+The complete setup will be used exclusively for that machine, no other input or SD card.
+
+Motor Control (ES-D508) 3 Phase Drive for Motor KL23-2N-1000
+	Power supply 5VDC, used for Ctrl-Logic
+	Power supply 36VDC, used for Power input
+KL23-2N-1000 
+	3 Phase 5.8A - Step Angle 1.2º - Encoder 1000 P/r
+Holding Torque 2 N/m
